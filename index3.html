@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruhi💗</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg,#ffb6c1,#e6b8ff,#ffcce6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+    background: white;
+    border-radius: 25px;
+    padding: 25px;
+    box-shadow: 0 15px 40px #0002;
+    text-align: center;
+}
+
+h1 {
+    color: #e84393;
+    margin: 12px 0;
+}
+
+h2 {
+    color: #c21870;
+}
+
+p {
+    color: #777;
+    line-height: 1.5;
+}
+
+.heart {
+    font-size: 60px;
+    animation: beat 1s infinite alternate;
+}
+
+@keyframes beat {
+    to { transform: scale(1.15); }
+}
+
+.card {
+    background: #fff0f6;
+    padding: 20px;
+    border-radius: 17px;
+    margin: 18px 0;
+}
+
+button {
+    border: none;
+    padding: 13px 18px;
+    border-radius: 12px;
+    background: #e84393;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    margin: 5px;
+    transition: .2s;
+}
+
+button:hover {
+    background: #c21870;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.secondary {
+    background: #ffe0ef;
+    color: #c21870;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    background: white;
+    color: #c21870;
+    border: 1px solid #ffc1dd;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ffc1dd;
+    border-radius: 12px;
+    margin: 8px 0;
+    outline: none;
+}
+
+.chat-box {
+    height: 250px;
+    overflow-y: auto;
+    background: #fff0f6;
+    padding: 12px;
+    border-radius: 15px;
+    text-align: left;
+    margin: 15px 0;
+}
+
+.message {
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+.user {
+    background: #e84393;
+    color: white;
+    text-align: right;
+}
+
+.bot {
+    background: white;
+    color: #c21870;
+}
+
+.result {
+    color: #d63384;
+    margin-top: 12px;
+    min-height: 22px;
+    font-size: 14px;
+}
+
+.footer {
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- HOME -->
+<div id="home" class="page active">
+
+    <div class="heart">💗</div>
+
+    <h1>Hey Ruhi!</h1>
+
+    <p>Welcome to your personal Funny Zone 😂</p>
+
+    <div class="card">
+        <h3>Someone has a question for you! 👀</h3>
+        <p>Ready for some fun?</p>
+    </div>
+
+    <button onclick="startQuiz()">Let's Start 💕</button>
+
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="page">
+
+    <h1>Ruhi's Quiz 😂</h1>
+
+    <div class="card">
+
+        <h3 id="question"></h3>
+
+        <div id="options"></div>
+
+        <div class="result" id="quizResult"></div>
+
+    </div>
+
+    <button onclick="nextQuestion()">Next ➜</button>
+
+    <button class="secondary" onclick="showPage('home')">
+        Home
+    </button>
+
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="page">
+
+    <h1>Chat Zone 💬</h1>
+
+    <p>Let's have some fun!</p>
+
+    <div class="chat-box" id="chatBox">
+
+        <div class="message bot">
+            Hey Ruhi! Kaisi ho? 😂💗
+        </div>
+
+    </div>
+
+    <input
+        type="text"
+        id="chatInput"
+        placeholder="Write something..."
+        maxlength="300"
+    >
+
+    <button onclick="sendMessage()">Send 💌</button>
+
+    <button class="secondary" onclick="openShare()">
+        Share Answers 📩
+    </button>
+
+    <button class="secondary" onclick="showPage('home')">
+        Home
+    </button>
+
+    <p class="result" id="chatStatus"></p>
+
+</div>
+
+<!-- SHARE -->
+<div id="share" class="page">
+
+    <h1>Your Answers 💗</h1>
+
+    <div class="card">
+
+        <h3>Review your responses</h3>
+
+        <p>
+            Your answers and messages will only be sent
+            when you press Share Answers.
+        </p>
+
+        <div id="answerPreview"></div>
+
+    </div>
+
+    <button onclick="sendDataToEmail()">
+        Share Answers 📩
+    </button>
+
+    <button class="secondary" onclick="showPage('chat')">
+        Back to Chat
+    </button>
+
+    <p class="result" id="emailStatus"></p>
+
+</div>
+
+<p class="footer">
+    Made with 💗 for Ruhi | No pressure, just fun!
+</p>
+
+</div>
+
+<script>
+
+// QUESTIONS
+
+const questions = [
+{
+    q: "If someone calls you cute, what will you say? 😎",
+    a: ["I know 😂", "Thank you 😊", "Who told you? 👀", "Stop it 🙈"]
+},
+{
+    q: "Your favourite type of person? 💗",
+    a: ["Funny 😂", "Caring 🥰", "Intelligent 🧠", "Honest 💕"]
+},
+{
+    q: "What makes you smile? 😊",
+    a: ["Jokes 😂", "Compliments 💗", "Friends 🌸", "Music 🎵"]
+},
+{
+    q: "Your perfect day? 🌈",
+    a: ["Movies 🍿", "Long conversations 💬", "Travel ✈️", "Sleep 😴"]
+},
+{
+    q: "Describe yourself in one word!",
+    a: ["Cute 🥰", "Funny 😂", "Smart 😎", "Mystery 👀"]
+}
+];
+
+// DATA
+
+let current = 0;
+let answers = [];
+let messages = [];
+let sending = false;
+
+// NOTICE FUNCTION
+
+function showNotice(elementId, message) {
+    document.getElementById(elementId).textContent = message;
+}
+
+// PAGE NAVIGATION
+
+function showPage(id) {
+
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+}
+
+// START QUIZ
+
+function startQuiz() {
+
+    current = 0;
+
+    answers = [];
+
+    showPage("quiz");
+
+    showQuestion();
+}
+
+// QUIZ
+
+function showQuestion() {
+
+    if (current >= questions.length) {
+        showPage("chat");
+        return;
+    }
+
+    document.getElementById("question").textContent =
+        questions[current].q;
+
+    showNotice("quizResult", "");
+
+    const options = document.getElementById("options");
+
+    options.innerHTML = "";
+
+    questions[current].a.forEach(answer => {
+
+        const button = document.createElement("button");
+
+        button.className = "option";
+
+        button.textContent = answer;
+
+        button.onclick = () => selectAnswer(answer);
+
+        options.appendChild(button);
+
+    });
+}
+
+function selectAnswer(answer) {
+
+    if (answers[current]) return;
+
+    answers[current] = {
+        question: questions[current].q,
+        answer: answer
+    };
+
+    showNotice("quizResult", "Nice choice, Ruhi! 💗");
+
+    document.querySelectorAll(".option").forEach(btn => {
+        btn.disabled = true;
+    });
+}
+
+function nextQuestion() {
+
+    if (!answers[current]) {
+
+        showNotice(
+            "quizResult",
+            "Choose an answer before continuing 😊"
+        );
+
+        return;
+    }
+
+    current++;
+
+    showQuestion();
+
+}
+
+// CHAT
+
+function sendMessage() {
+
+    const input = document.getElementById("chatInput");
+
+    const text = input.value.trim();
+
+    if (!text) {
+
+        showNotice("chatStatus", "Write something first 💗");
+
+        return;
+    }
+
+    messages.push({
+        sender: "Ruhi",
+        message: text
+    });
+
+    addMessage(text, "user");
+
+    input.value = "";
+
+    showNotice("chatStatus", "");
+
+    const replies = [
+        "Haha! 😂 That's interesting!",
+        "Oh really? 👀",
+        "You are funny! 💗",
+        "Tell me more! 🙈",
+        "Nice one! 😎",
+        "That's sweet! 🥰"
+    ];
+
+    setTimeout(() => {
+
+        const reply = replies[
+            Math.floor(Math.random() * replies.length)
+        ];
+
+        addMessage(reply, "bot");
+
+    }, 700);
+
+}
+
+function addMessage(text, type) {
+
+    const box = document.getElementById("chatBox");
+
+    const div = document.createElement("div");
+
+    div.className = "message " + type;
+
+    div.textContent = text;
+
+    box.appendChild(div);
+
+    box.scrollTop = box.scrollHeight;
+
+}
+
+// ANSWER PREVIEW
+
+function openShare() {
+
+    showPage("share");
+
+    showPreview();
+
+}
+
+function showPreview() {
+
+    const preview = document.getElementById("answerPreview");
+
+    preview.replaceChildren();
+
+    if (answers.filter(Boolean).length === 0 && messages.length === 0) {
+
+        const p = document.createElement("p");
+
+        p.textContent = "No answers or messages yet.";
+
+        preview.appendChild(p);
+
+        return;
+    }
+
+    answers.forEach(item => {
+
+        if (!item) return;
+
+        const p = document.createElement("p");
+
+        p.textContent = item.question + " → " + item.answer;
+
+        preview.appendChild(p);
+
+    });
+
+    messages.forEach(item => {
+
+        const p = document.createElement("p");
+
+        p.textContent = item.sender + ": " + item.message;
+
+        preview.appendChild(p);
+
+    });
+
+}
+
+// FORMSPREE EMAIL
+
+async function sendDataToEmail() {
+
+    if (sending) return;
+
+    if (!answers.some(Boolean) && messages.length === 0) {
+
+        showNotice(
+            "emailStatus",
+            "Please answer some questions or write a message first."
+        );
+
+        return;
+    }
+
+    const payload = {
+
+        name: "Ruhi",
+
+        quizAnswers: answers.filter(Boolean),
+
+        chatMessages: messages,
+
+        submittedAt: new Date().toISOString()
+
+    };
+
+    const status = document.getElementById("emailStatus");
+
+    sending = true;
+
+    status.textContent = "Submitting your responses... 💌";
+
+    try {
+
+        const response = await fetch(
+            "https://formspree.io/f/xdeagrdj",
+            {
+                method: "POST",
+
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(payload)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Submission failed");
+        }
+
+        status.textContent =
+            "Your responses have been submitted successfully! 💗";
+
+    } catch(error) {
+
+        status.textContent =
+            "Submission failed. Please try again.";
+
+        console.error(error);
+
+    } finally {
+
+        sending = false;
+
+    }
+
+}
+
+// ENTER KEY CHAT
+
+document.getElementById("chatInput").addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
